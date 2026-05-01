@@ -1,0 +1,992 @@
+.model small
+.stack 100h
+.data
+row db 12
+col db 40
+last_row db 12
+last_col db 40
+randrow db 13
+randcol db 40
+
+left1 db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+setleft db 0
+readleft db 0
+right2 db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+setright db 0
+readright db 0
+up3 db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+setup db 0
+readup db 0
+down4 db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+setdown db 0
+readdown db 0
+prior db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+set db 0
+read db 0
+headprior db 1   
+.code
+
+main proc
+    mov ax, @data
+    mov ds, ax
+    mov bl, [set]
+    mov bh, 0
+    mov prior[bx], 1
+    inc set
+
+    inc readdown
+    inc readright
+    inc readup
+    
+    mov ah, 02h
+    mov bh, 00h
+    mov dh, 9h
+    mov dl, 25h
+    int 10h
+    
+    mov dl, 0Fh
+    int 21h
+    
+    
+    
+    initialize:
+        
+        
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+    
+        mov dl, 0DBh
+        int 21h
+        dec col
+        
+        mov bl, [setleft]
+        mov bh, 0 
+        
+        inc left1[bx]
+        
+        cmp col, 30
+        jne initialize
+        jmp removeleft
+        
+        
+        
+    removeleft:    
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [last_row]
+        mov dl, [last_col]
+        int 10h
+        
+        cmp last_col, 1
+        je resetremove1
+        jne normremove1
+        
+        resetremove1:
+            mov last_col, 79
+            jmp continueremove1
+            
+        normremove1:
+            dec last_col
+            jmp continueremove1
+        
+        continueremove1:
+        
+        mov dl, 00h
+        int 21h
+        
+        mov bl, [readleft]
+        mov bh, 0
+        
+        dec left1[bx]
+        
+        cmp left1[bx], 0
+        je read1
+        jne jmp1
+        read1:
+            inc read
+            inc readleft
+            
+        jmp1:
+        cmp [headprior], 1
+            
+        je left
+        
+        cmp [headprior], 2
+        je right
+        
+        cmp [headprior], 3
+        je up
+        
+        cmp [headprior], 4
+        je down
+        
+        
+    
+    
+    removedown:
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [last_row]
+        mov dl, [last_col]
+        int 10h
+        
+       
+        
+        cmp last_row, 23
+        je resetremove2
+        jne normremove2
+        
+        resetremove2:
+            mov last_row, 1
+            jmp continueremove2
+            
+        normremove2:
+            inc last_row
+            jmp continueremove2
+        
+        continueremove2:
+        
+        mov dl, 00h
+        int 21h
+        
+        mov bl, [readdown]
+        mov bh, 0
+        
+        dec down4[bx]
+        
+        cmp down4[bx], 0
+        je read4
+        jne jmp4
+        read4:
+            inc read
+            inc readdown
+            
+        jmp4:
+            cmp [headprior], 1
+        je left
+        
+        cmp [headprior], 2
+        je right
+        
+        cmp [headprior], 3
+        je up
+        
+        cmp [headprior], 4
+        je down
+        
+    removeright:
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [last_row]
+        mov dl, [last_col]
+        int 10h
+        
+        
+        cmp last_col, 79
+        je resetremove3
+        jne normremove3
+        
+        resetremove3:
+            mov last_col, 1
+            jmp continueremove3
+            
+        normremove3:
+            inc last_col
+            jmp continueremove3
+        
+        continueremove3:
+        
+        mov dl, 00h
+        int 21h
+        
+        mov bl, [readright]
+        mov bh, 0
+        
+        dec right2[bx]
+        
+        cmp right2[bx], 0
+        je read2
+        jne jmp2
+        read2:
+            inc read
+            inc readright
+            
+        jmp2:
+            cmp [headprior], 1
+        je left
+        
+        cmp [headprior], 2
+        je right
+        
+        cmp [headprior], 3
+        je up
+        
+        cmp [headprior], 4
+        je down
+    
+    removeup:
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [last_row]
+        mov dl, [last_col]
+        int 10h
+        
+        
+        cmp last_row, 1
+        je resetremove4
+        jne normremove4
+        
+        resetremove4:
+            mov last_row, 23
+            jmp continueremove4
+            
+        normremove4:
+            dec last_row
+            jmp continueremove4
+        
+        continueremove4:
+        
+        mov dl, 00h
+        int 21h    
+        
+        mov bl, [readup]
+        mov bh, 0
+        
+        dec up3[bx]
+        
+        cmp up3[bx], 0
+        je read3
+        jne jmp3
+        read3:
+            inc read
+            inc readup
+            
+        jmp3:
+            cmp [headprior], 1
+        je left
+        
+        cmp [headprior], 2
+        je right
+        
+        cmp [headprior], 3
+        je up
+        
+        cmp [headprior], 4
+        je down 
+ 
+    
+    left:
+    
+        mov ah, 01h
+        int 16h
+        jz no_key0
+        
+        mov ah, 00h
+        int 16h
+        
+        cmp ah, 48h
+        je headprior13 
+        
+        cmp ah, 50h
+        je headprior14
+          
+        cmp ah, 04Dh
+        je headprior12
+        
+        cmp ah, 04Bh
+        je headprior11
+        
+        headprior13:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 3
+            inc setup
+            inc set
+            mov headprior, 3
+            jmp no_key0
+        headprior14:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 4
+            inc setdown
+            inc set
+            mov headprior, 4
+            jmp no_key0
+        headprior12:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 2
+            inc setright
+            inc set
+            mov headprior, 2
+            jmp no_key0
+        headprior11:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 1
+            inc setleft
+            inc set
+            mov headprior, 1
+            jmp no_key0
+        
+        
+            
+        
+        no_key0: 
+        
+        
+            
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+    
+        mov dl, 0DBh
+        int 21h
+        cmp col, 1
+        je reset1
+        jne norm1
+        
+        reset1:
+            mov col, 79
+            jmp continue1
+            
+        norm1:
+            dec col
+            jmp continue1
+        
+        continue1:
+        
+        
+        mov bl, [setleft]
+        mov bh, 0
+        
+        inc left1[bx]
+        
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+        
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0DBh
+        je gameover
+        
+        
+                
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0Fh
+        
+        je food1
+        
+        
+        mov bl, [read]
+        mov bh, 0
+        cmp prior[bx], 1
+        je removeleft
+        
+        cmp prior[bx], 2
+        je removeright
+        
+        cmp prior[bx], 3
+        je removeup
+        
+        cmp prior[bx], 4
+        je removedown
+        
+        food1:
+                       
+            mov ah, 00h   
+            int 1ah         
+            
+            
+            mov al, dl      
+            mov ah, 0
+            mov bl, 77      
+            div bl
+            mov randcol, ah
+            
+            cmp randcol, 0
+            je setcol1
+            jne concol1
+            
+            setcol1:
+                mov randcol, 2
+                jmp concol1
+            concol1:
+            
+            mov al, dl     
+            mov ah, 0
+            mov bl, 20      
+            div bl
+            mov randrow, ah
+            
+            cmp randrow, 0
+            je setrand1
+            jne conrand1
+            
+            setrand1:
+                mov randrow, 2
+                jmp conrand1
+            conrand1:
+            
+            mov ah, 02h
+            mov bh, 00h
+            mov dh, randrow
+            mov dl, randcol
+            int 10h         
+            
+            mov dl, 0Fh     
+            mov ah, 02h
+            int 21h
+            
+            mov bh, 00h
+            mov dh, [row]
+            mov dl, [col]
+            int 10h
+        
+            mov ah, 08h
+            mov bh, 00h
+            mov cx, 01h
+            int 10h
+        
+             
+            
+            jmp left
+        
+    down:
+        mov ah, 01h
+        int 16h
+        jz no_key1
+        
+        mov ah, 00h
+        int 16h
+        
+        cmp ah, 48h
+        je headprior23 
+        
+        cmp ah, 50h
+        je headprior24
+          
+        cmp ah, 04Dh
+        je headprior22
+        
+        cmp ah, 04Bh
+        je headprior21
+        
+        headprior23:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 3 
+            inc setup
+            inc set
+            mov headprior, 3
+            jmp no_key1
+        headprior24:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 4
+            inc setdown
+            inc set
+            mov headprior, 4
+            jmp no_key1
+        headprior22:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 2
+            inc setright
+            inc set
+            mov headprior, 2
+            jmp no_key1
+        headprior21: 
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 1
+            inc setleft
+            inc set
+            mov headprior, 1
+            jmp no_key1
+        
+        no_key1: 
+        
+        
+        
+        
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+        
+        mov dl, 0DBh
+        int 21h
+        
+        cmp row, 23
+        je reset2
+        jne norm2
+        
+        reset2:
+            mov row, 1
+            jmp continue2
+            
+        norm2:
+            inc row
+            jmp continue2
+        
+        continue2:
+        mov bl, [setdown]
+        mov bh, 0
+        
+        inc down4[bx]
+        
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+        
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0DBh
+        je gameover
+        
+        
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0Fh
+        
+        je food2
+        
+        mov bl, [read]
+        mov bh, 0
+        cmp prior[bx], 1
+        je removeleft
+        
+        cmp prior[bx], 2
+        je removeright
+        
+        cmp prior[bx], 3
+        je removeup
+        
+        cmp prior[bx], 4
+        je removedown
+        
+        food2:
+                        
+            mov ah, 00h   
+            int 1ah         
+            
+            
+            mov al, dl      
+            mov ah, 0
+            mov bl, 77      
+            div bl
+            mov randcol, ah
+            
+            cmp randcol, 0
+            je setcol2
+            jne concol2
+            
+            setcol2:
+                mov randcol, 2
+                jmp concol2
+            concol2:
+            
+            mov al, dl     
+            mov ah, 0
+            mov bl, 20      
+            div bl
+            mov randrow, ah
+            
+            cmp randrow, 0
+            je setrand2
+            jne conrand2
+            
+            setrand2:
+                mov randrow, 2
+                jmp conrand2
+            conrand2:
+            
+            mov ah, 02h
+            mov bh, 00h
+            mov dh, randrow
+            mov dl, randcol
+            int 10h         
+            
+            mov dl, 0Fh     
+            mov ah, 02h
+            int 21h         
+
+            
+            jmp down
+            
+        
+    right:
+        mov ah, 01h
+        int 16h
+        jz no_key2
+        
+        mov ah, 00h
+        int 16h
+        
+        cmp ah, 48h
+        je headprior33 
+        
+        cmp ah, 50h
+        je headprior34
+          
+        cmp ah, 04Dh
+        je headprior32
+        
+        cmp ah, 04Bh
+        je headprior31
+        
+        headprior33:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 3
+            inc setup
+            inc set
+            mov headprior, 3
+            jmp no_key2
+        headprior34:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 4
+            inc setdown
+            inc set
+            mov headprior, 4
+            jmp no_key2
+        headprior32:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 2
+            inc setright
+            inc set
+            mov headprior, 2
+            jmp no_key2
+        headprior31:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 1
+            inc setleft
+            inc set
+            mov headprior, 1
+            jmp no_key2
+        
+        no_key2:    
+            
+        
+            
+        
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+    
+        mov dl, 0DBh
+        int 21h
+        
+        cmp col, 79
+        je reset3
+        jne norm3
+        
+        reset3:
+            mov col, 1
+            jmp continue3
+            
+        norm3:
+            inc col
+            jmp continue3
+        
+        continue3:
+        
+        mov bl, [setright]
+        mov bh, 0
+        
+        inc right2[bx]
+        
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+        
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0DBh
+        je gameover
+        
+        
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0Fh
+        
+        je food3
+        
+        mov bl, [read]
+        mov bh, 0
+        cmp prior[bx], 1
+        je removeleft
+        
+        cmp prior[bx], 2
+        je removeright
+        
+        cmp prior[bx], 3
+        je removeup
+        
+        cmp prior[bx], 4
+        je removedown
+        
+        food3:
+           mov ah, 00h   
+            int 1ah         
+            
+            
+            mov al, dl      
+            mov ah, 0
+            mov bl, 77      
+            div bl
+            mov randcol, ah
+            
+            cmp randcol, 0
+            je setcol3
+            jne concol3
+            
+            setcol3:
+                mov randcol, 2
+                jmp concol3
+            concol3:
+            
+            mov al, dl     
+            mov ah, 0
+            mov bl, 20      
+            div bl
+            mov randrow, ah
+            
+            cmp randrow, 0
+            je setrand3
+            jne conrand3
+            
+            setrand3:
+                mov randrow, 2
+                jmp conrand3
+            conrand3:
+            
+            mov ah, 02h
+            mov bh, 00h
+            mov dh, randrow
+            mov dl, randcol
+            int 10h         
+            
+            mov dl, 0Fh     
+            mov ah, 02h
+            int 21h
+
+            
+            jmp right
+        
+    up:
+        mov ah, 01h
+        int 16h
+        jz no_key3
+        
+        mov ah, 00h
+        int 16h
+        
+        cmp ah, 48h
+        je headprior43 
+        
+        cmp ah, 50h
+        je headprior44
+          
+        cmp ah, 04Dh
+        je headprior42
+        
+        cmp ah, 04Bh
+        je headprior41
+        
+        headprior43:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 3 
+            inc setup
+            inc set
+            mov headprior, 3
+            jmp no_key3
+        headprior44:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 4
+            inc setdown
+            inc set
+            mov headprior, 4
+            jmp no_key3
+        headprior42:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 2
+            inc setright
+            inc set
+            mov headprior, 2
+            jmp no_key3
+        headprior41:
+            mov bl, [set]
+            mov bh, 0
+            mov prior[bx], 1
+            inc setleft
+            inc set
+            mov headprior, 1
+            jmp no_key3
+        
+        no_key3:
+        
+        
+        
+        
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+    
+        mov dl, 0DBh
+        int 21h
+        
+        cmp row, 1
+        je reset4
+        jne norm4
+        
+        reset4:
+            mov row, 23
+            jmp continue4
+            
+        norm4:
+            dec row
+            jmp continue4
+        
+        continue4:
+        
+        mov bl, [setup]
+        mov bh, 0
+        
+        inc up3[bx]
+        
+        mov bh, 00h
+        mov dh, [row]
+        mov dl, [col]
+        int 10h
+        
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0DBh
+        je gameover
+        
+        
+        mov ah, 08h
+        mov bh, 00h
+        mov cx, 01h
+        int 10h
+        
+        cmp al, 0Fh
+        
+        je food4
+        
+        
+        mov bl, [read]
+        mov bh, 0
+        cmp prior[bx], 1
+        je removeleft
+        
+        cmp prior[bx], 2
+        je removeright
+        
+        cmp prior[bx], 3
+        je removeup
+        
+        cmp prior[bx], 4
+        je removedown
+        
+        food4:
+            mov ah, 00h   
+            int 1ah         
+            
+            
+            mov al, dl      
+            mov ah, 0
+            mov bl, 77      
+            div bl
+            mov randcol, ah
+            
+            cmp randcol, 0
+            je setcol4
+            jne concol4
+            
+            setcol4:
+                mov randcol, 2
+                jmp concol4
+            concol4:
+            
+            mov al, dl     
+            mov ah, 0
+            mov bl, 20      
+            div bl
+            mov randrow, ah
+            
+            cmp randrow, 0
+            je setrand4
+            jne conrand4
+            
+            setrand4:
+                mov randrow, 2
+                jmp conrand4
+            conrand4:
+            
+            mov ah, 02h
+            mov bh, 00h
+            mov dh, randrow
+            mov dl, randcol
+            int 10h         
+            
+            mov dl, 0Fh     
+            mov ah, 02h
+            int 21h
+
+            
+            jmp up
+        
+        
+    gameover:
+    mov ah, 4Ch
+    int 21h
+        
+    
+    
+main endp                                                       
+end main
