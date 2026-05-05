@@ -1,0 +1,1136 @@
+.model small
+.stack 100h
+.data
+pos1 db 0B3H,"1", 0B3H, "$"
+pos2 db 0B3H,"2", 0B3H, "$"
+pos3 db 0B3H,"3", 0B3H, "$"
+pos4 db 0B3H,"4", 0B3H, "$"
+pos5 db 0B3H,"5", 0B3H, "$"
+pos6 db 0B3H,"6", 0B3H, "$"
+pos7 db 0B3H,"7", 0B3H, "$"
+pos8 db 0B3H,"8", 0B3H, "$"
+pos9 db 0B3H,"9", 0B3H, "$"
+pos10 db 0B3H,"10", 0B3H, "$"
+seg db 0Ah, 0Dh,"---------", 0Ah, 0Dh, "$"
+user db "$"
+Player db "Player X: $"
+playerX db 0,0,0,0,0,0,0,0,0
+playerY db 0,0,0,0,0,0,0,0,0
+userxwins db "Player X wins!!$"
+userywins db "Player Y wins!!$"
+file db "scores.txt",0
+fileHandle dw ?
+Xwins db 0
+Xloss db 0
+Ywins db 0
+Yloss db 0
+msgX db "Player X : Wins = ",0
+msgL db " Losses = ",0,13,10
+msgY db "Player Y : Wins = ",0         
+scoredigit db ?
+
+.code
+
+main proc
+    
+    mov dx, @data
+    mov ds, dx
+    mov ah, 09h   
+    
+   
+    
+    mov dx, offset pos1
+    int 21h
+    
+    mov dx, offset pos2
+    int 21h
+    
+    mov dx, offset pos3
+    int 21h
+    
+    mov dx, offset seg
+    int 21h
+    
+    mov dx, offset pos4
+    int 21h
+    
+    mov dx, offset pos5
+    int 21h
+    
+    mov dx, offset pos6
+    int 21h
+    
+    mov dx, offset seg
+    int 21h                   
+                       
+    mov dx, offset pos7
+    int 21h
+    
+    mov dx, offset pos8
+    int 21h
+    
+    mov dx, offset pos9
+    int 21h
+    
+    mov ah, 02h
+    mov dl, 0Ah
+    int 21h
+    mov dl, 0Dh
+    int 21h
+    mov dl, 0Ah
+    int 21h
+    mov dl, 0Dh
+    int 21h
+    
+    mov cl, 1
+    start:
+    
+    xor cl, 1
+    
+    cmp cl, 0
+    je user1
+    jne user2
+    
+    user1:
+    mov Player + 7, 'X'
+    mov user, 'X'
+    jmp input
+    
+    user2:
+    mov Player + 7, 'Y'
+    mov user, 'Y'
+    jmp input 
+    
+    
+    input:
+    
+    mov ah, 09h
+    mov dx, offset Player
+    int 21h
+    
+    mov ah, 01h
+    int 21h
+    mov bh , al
+    sub bh, 30h
+    
+;    mov ah, 02h
+ ;   mov dl, 0Ah
+  ;  int 21h
+    
+   ; mov dl, 0Dh
+    ;int 21h 
+    
+    
+    mov bl, al
+    mov ah, 02h
+    
+    mov dl, 0Ah
+    int 21h
+    mov dl, 0Dh
+    int 21h
+    
+    cmp bl, 31h
+    je set1
+    
+    cmp bl, 32h
+    je set2
+    
+    cmp bl, 33h
+    je set3
+    
+    cmp bl, 34h
+    je set4
+    
+    cmp bl, 35h
+    je set5
+    
+    cmp bl, 36h
+    je set6
+    
+    cmp bl, 37h
+    je set7
+    
+    cmp bl, 38h
+    je set8
+    
+    cmp bl, 39h
+    je set9
+    
+    set1:
+    mov dl, user
+    mov pos1 + 1, dl
+    cmp cl, 0
+    
+    je userX
+    jne userY
+    
+    userX:
+    mov [playerX], 1
+    
+    jmp print
+    
+    userY:
+    mov [playerY], 1
+    
+    jmp print
+    
+    set2:
+    mov dl, user
+    mov pos2 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX2
+    jne userY2
+    
+    userX2:
+    mov [playerX+1], 1
+    
+    jmp print
+    userY2:
+    mov [playerY+1], 1
+    jmp print     
+         
+    set3:       
+    mov dl, user
+    mov pos3 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX3
+    jne userY3
+    
+    userX3:
+    mov [playerX+2], 1
+    
+    jmp print
+    userY3:
+    mov [playerY+2], 1
+    
+    jmp print
+    
+    set4:       
+    mov dl, user
+    mov pos4 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX4
+    jne userY4
+    
+    userX4:
+    mov [playerX+3], 1
+    
+    jmp print
+    userY4:
+    mov [playerY+3], 1
+    
+    jmp print
+    
+    set5:       
+    mov dl, user
+    mov pos5 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX5
+    jne userY5
+    
+    userX5:
+    mov [playerX+4], 1
+    
+    jmp print
+    userY5:
+    mov [playerY+4], 1
+    
+    jmp print
+    
+    set6:       
+    mov dl, user
+    mov pos6 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX6
+    jne userY6
+    
+    userX6:
+    mov [playerX+5], 1
+    
+    jmp print
+    userY6:
+    mov [playerY+5], 1
+    
+    jmp print
+    
+    set7:       
+    mov dl, user
+    mov pos7 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX7
+    jne userY7
+    
+    userX7:
+    mov [playerX+6], 1
+    
+    jmp print
+    userY7:
+    mov [playerY+6], 1
+    
+    jmp print
+    
+    set8:       
+    mov dl, user
+    mov pos8 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX8
+    jne userY8
+    
+    userX8:
+    mov [playerX+7], 1
+    
+    jmp print
+    userY8:
+    mov [playerY+7], 1
+    
+    jmp print
+    
+    set9:       
+    mov dl, user
+    mov pos9 + 1, dl
+    
+    cmp cl, 0
+    
+    je userX9
+    jne userY9
+    
+    userX9:
+    mov [playerX+8], 1
+    
+    jmp print
+    userY9:
+    mov [playerY+8], 1
+    
+    jmp print
+       
+    
+    print:
+    
+    mov ah, 09h
+    
+    mov dx, offset pos1
+    int 21h
+    
+    mov dx, offset pos2
+    int 21h
+    
+    mov dx, offset pos3
+    int 21h
+    
+    mov dx, offset seg
+    int 21h
+    
+    mov dx, offset pos4
+    int 21h
+    
+    mov dx, offset pos5
+    int 21h
+    
+    mov dx, offset pos6
+    int 21h
+    
+    mov dx, offset seg
+    int 21h                   
+                       
+    mov dx, offset pos7
+    int 21h
+    
+    mov dx, offset pos8
+    int 21h
+    
+    mov dx, offset pos9
+    int 21h
+    
+    mov ah, 02h
+    mov dl, 0Ah
+    int 21h
+    mov dl, 0Dh
+    int 21h
+    mov dl, 0Ah
+    int 21h
+    mov dl, 0Dh
+    int 21h
+    
+    
+    Condition:
+    
+    cmp cl, 0
+    je checkX
+    jne checkY
+    
+    checkX:
+        
+        cmp bh, 1
+        je checkX1
+        
+        cmp bh, 2
+        je checkX2
+        
+        cmp bh, 3
+        je checkX3
+        
+        cmp bh, 4
+        je checkX4
+        
+        cmp bh, 5
+        je checkX5    
+                 
+        cmp bh, 6
+        je checkX6
+        
+        cmp bh, 7
+        je checkX7
+        
+        cmp bh, 8
+        je checkX8
+        
+        cmp bh, 9
+        je checkX9
+        
+        checkX1:
+        
+        mov ah, [playerX]
+        mov dh, [playerX+1]
+        
+        AND ah, dh
+        
+        mov dh, [playerX+2]
+        AND ah, dh
+        
+        mov al, [playerX]
+        mov dh, [playerX+4]
+        
+        AND al, dh
+        
+        mov dh, [playerX+8]
+        
+        AND al, dh
+        
+        mov bh, [playerX]
+        mov dh, [playerX+3]
+        
+        AND bh,dh
+        
+        mov dh, [playerX+6]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        
+        checkX2:
+        
+        mov ah, [playerX]
+        mov dh, [playerX+1]
+        
+        AND ah, dh
+        
+        mov dh, [playerX+2]
+        
+        AND ah, dh
+        
+        mov al, [playerX+1]
+        mov dh, [playerX+4]
+        
+        AND al, dh
+        
+        mov dh, [playerX+8]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        checkX3:
+        
+        mov ah, [playerX+2]
+        mov dh, [playerX+1]
+        
+        AND ah, dh
+        
+        mov dh, [playerX]
+        AND ah, dh
+        
+        mov al, [playerX+2]
+        mov dh, [playerX+4]
+        
+        AND al, dh
+        
+        mov dh, [playerX+6]
+        
+        AND al, dh
+        
+        mov bh, [playerX+2]
+        mov dh, [playerX+5]
+        
+        AND bh,dh
+        
+        mov dh, [playerX+8]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        checkX4:
+        
+        mov ah, [playerX+3]
+        mov dh, [playerX+4]
+        
+        AND ah, dh
+        
+        mov dh, [playerX+5]
+        
+        AND ah, dh
+        
+        mov al, [playerX]
+        mov dh, [playerX+3]
+        
+        AND al, dh
+        
+        mov dh, [playerX+6]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        checkX5:
+        
+        mov ah, [playerX+4]
+        mov al, [playerX+3]
+        
+        AND ah, al
+        mov al, [playerX+5]
+        
+        AND ah, al
+        
+        mov al, [playerX+4]
+        mov bh, [playerX+1]
+        
+        AND al, bh
+        mov bh, [playerX+7]
+        
+        AND al, bh
+        
+        mov bh, [playerX+4]
+        mov bl, [playerX]
+        
+        AND bh, bl
+        mov bl, [playerX+8]
+        
+        AND bh, bl
+        
+        mov bl, [playerX+2]
+        mov ch, [playerX+4]
+        
+        AND bl, ch
+        
+        mov ch,[playerX+6]
+        
+        AND bl, ch
+        
+        OR bh, bl
+        OR al, bh
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        checkX6:
+        mov ah, [playerX+5]
+        mov dh, [playerX+4]
+        
+        AND ah, dh
+        
+        mov dh, [playerX+3]
+        
+        AND ah, dh
+        
+        mov al, [playerX+5]
+        mov dh, [playerX+2]
+        
+        AND al, dh
+        
+        mov dh, [playerX+8]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        checkX7:
+        mov ah, [playerX+6]
+        mov dh, [playerX+7]
+        
+        AND ah, dh
+        
+        mov dh, [playerX+8]
+        AND ah, dh
+        
+        mov al, [playerX+6]
+        mov dh, [playerX+4]
+        
+        AND al, dh
+        
+        mov dh, [playerX+2]
+        
+        AND al, dh
+        
+        mov bh, [playerX+6]
+        mov dh, [playerX+3]
+        
+        AND bh,dh
+        
+        mov dh, [playerX]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        checkX8:
+        mov ah, [playerX+7]
+        mov dh, [playerX+6]
+        
+        AND ah, dh
+        
+        mov dh, [playerX+8]
+        
+        AND ah, dh
+        
+        mov al, [playerX+7]
+        mov dh, [playerX+4]
+        
+        AND al, dh
+        
+        mov dh, [playerX+1]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        checkX9:
+        mov ah, [playerX+8]
+        mov dh, [playerX+7]
+        
+        AND ah, dh
+        
+        mov dh, [playerX+6]
+        AND ah, dh
+        
+        mov al, [playerX+8]
+        mov dh, [playerX+4]
+        
+        AND al, dh
+        
+        mov dh, [playerX]
+        
+        AND al, dh
+        
+        mov bh, [playerX+8]
+        mov dh, [playerX+5]
+        
+        AND bh,dh
+        
+        mov dh, [playerX+2]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Xwins
+        jne start
+        
+        
+    checkY:
+        cmp bh, 1
+        je checkY1
+        
+        cmp bh, 2
+        je checkY2
+        
+        cmp bh, 3
+        je checkY3
+        
+        cmp bh, 4
+        je checkY4
+        
+        cmp bh, 5
+        je checkY5    
+                 
+        cmp bh, 6
+        je checkY6
+        
+        cmp bh, 7
+        je checkY7
+        
+        cmp bh, 8
+        je checkY8
+        
+        cmp bh, 9
+        je checkY9
+        
+        checkY1:
+        
+        mov ah, [playerY]
+        mov dh, [playerY+1]
+        
+        AND ah, dh
+        
+        mov dh, [playerY+2]
+        AND ah, dh
+        
+        mov al, [playerY]
+        mov dh, [playerY+4]
+        
+        AND al, dh
+        
+        mov dh, [playerY+8]
+        
+        AND al, dh
+        
+        mov bh, [playerY]
+        mov dh, [playerY+3]
+        
+        AND bh,dh
+        
+        mov dh, [playerY+6]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        
+        checkY2:
+        
+        mov ah, [playerY]
+        mov dh, [playerY+1]
+        
+        AND ah, dh
+        
+        mov dh, [playerY+2]
+        
+        AND ah, dh
+        
+        mov al, [playerY+1]
+        mov dh, [playerY+4]
+        
+        AND al, dh
+        
+        mov dh, [playerY+8]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        checkY3:
+        
+        mov ah, [playerY+2]
+        mov dh, [playerY+1]
+        
+        AND ah, dh
+        
+        mov dh, [playerY]
+        AND ah, dh
+        
+        mov al, [playerY+2]
+        mov dh, [playerY+4]
+        
+        AND al, dh
+        
+        mov dh, [playerY+6]
+        
+        AND al, dh
+        
+        mov bh, [playerY+2]
+        mov dh, [playerY+5]
+        
+        AND bh,dh
+        
+        mov dh, [playerY+8]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        checkY4:
+        
+        mov ah, [playerY+3]
+        mov dh, [playerY+4]
+        
+        AND ah, dh
+        
+        mov dh, [playerY+5]
+        
+        AND ah, dh
+        
+        mov al, [playerY]
+        mov dh, [playerY+3]
+        
+        AND al, dh
+        
+        mov dh, [playerY+6]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        checkY5:
+        
+        mov ah, [playerY+4]
+        mov al, [playerY+3]
+        
+        AND ah, al
+        mov al, [playerY+5]
+        
+        AND ah, al
+        
+        mov al, [playerY+4]
+        mov bh, [playerY+1]
+        
+        AND al, bh
+        mov bh, [playerY+7]
+        
+        AND al, bh
+        
+        mov bh, [playerY+4]
+        mov bl, [playerY]
+        
+        AND bh, bl
+        mov bl, [playerY+8]
+        
+        AND bh, bl
+        
+        mov bl, [playerY+2]
+        mov ch, [playerY+4]
+        
+        AND bl, ch
+        
+        mov ch,[playerY+6]
+        
+        AND bl, ch
+        
+        OR bh, bl
+        OR al, bh
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        checkY6:
+        mov ah, [playerY+5]
+        mov dh, [playerY+4]
+        
+        AND ah, dh
+        
+        mov dh, [playerY+3]
+        
+        AND ah, dh
+        
+        mov al, [playerY+5]
+        mov dh, [playerY+2]
+        
+        AND al, dh
+        
+        mov dh, [playerY+8]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        checkY7:
+        mov ah, [playerY+6]
+        mov dh, [playerY+7]
+        
+        AND ah, dh
+        
+        mov dh, [playerY+8]
+        AND ah, dh
+        
+        mov al, [playerY+6]
+        mov dh, [playerY+4]
+        
+        AND al, dh
+        
+        mov dh, [playerY+2]
+        
+        AND al, dh
+        
+        mov bh, [playerY+6]
+        mov dh, [playerY+3]
+        
+        AND bh,dh
+        
+        mov dh, [playerY]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        checkY8:
+        mov ah, [playerY+7]
+        mov dh, [playerY+6]
+        
+        AND ah, dh
+        
+        mov dh, [playerY+8]
+        
+        AND ah, dh
+        
+        mov al, [playerY+7]
+        mov dh, [playerY+4]
+        
+        AND al, dh
+        
+        mov dh, [playerY+1]
+        
+        AND al, dh
+        
+        OR ah, al
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        checkY9:
+        mov ah, [playerY+8]
+        mov dh, [playerY+7]
+        
+        AND ah, dh
+        
+        mov dh, [playerY+6]
+        AND ah, dh
+        
+        mov al, [playerY+8]
+        mov dh, [playerY+4]
+        
+        AND al, dh
+        
+        mov dh, [playerY]
+        
+        AND al, dh
+        
+        mov bh, [playerY+8]
+        mov dh, [playerY+5]
+        
+        AND bh,dh
+        
+        mov dh, [playerY+2]
+        
+        AND bh, dh
+        
+        OR ah, al
+        OR ah, bh
+        
+        cmp ah, 1
+        
+        je Player_Ywins
+        jne start
+        
+        Player_Xwins: 
+        inc Xwins
+        inc Yloss
+        call WriteToFile
+        mov ah, 09h
+        mov dx, offset userxwins
+        int 21h
+        jmp exit
+        
+        Player_Ywins:  
+        inc Ywins
+        inc Xloss
+        call WriteToFile
+        mov ah, 09h
+        mov dx, offset userywins
+        int 21h
+        jmp exit
+
+    
+             
+        exit:
+        mov ah, 4Ch
+        int 21h    
+        
+        
+        
+    
+    main endp 
+WriteToFile proc
+    mov ah, 3ch
+    mov cx, 0
+    mov dx, offset file
+    int 21h
+    mov fileHandle, ax
+    
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset msgX
+    mov cx, 18 
+    int 21h
+  
+    
+    mov al, Xwins
+    add al, 30h
+    mov [scoredigit], al  
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset scoredigit
+    mov cx, 1  
+    int 21h
+    
+   
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset msgL
+    mov cx, 11  
+    int 21h
+   
+    
+    mov al, Xloss
+    add al, 30h
+    mov [scoredigit], al 
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset scoredigit
+    mov cx, 1  
+    int 21h
+    
+    mov [scoredigit], 13  
+    mov [scoredigit+1], 10 
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset scoredigit
+    mov cx, 2
+    int 21h
+  
+    
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset msgY
+    mov cx, 18  
+    int 21h
+ 
+    
+  
+    mov al, Ywins
+    add al, 30h
+    mov [scoredigit], al 
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset scoredigit
+    mov cx, 1 
+    int 21h
+ 
+    
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset msgL
+    mov cx, 11 
+    int 21h
+    
+   
+    mov al, Yloss
+    add al, 30h
+    mov [scoredigit], al 
+    mov ah, 40h
+    mov bx, fileHandle
+    mov dx, offset scoredigit
+    mov cx, 1 
+    int 21h
+  
+    
+    mov ah, 3Eh  
+    mov bx, fileHandle
+    int 21h
+    ret
+    
+WriteToFile endp
+end main   
+explain me everything, i have viva tmrw
